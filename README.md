@@ -13,9 +13,14 @@ decomposition…) instead of leaving feedback at "this feels off."
 ## What's inside
 
 ```text
-SKILL.md                    # core concepts + red-flags quick-reference table
-references/examples.md      # worked examples from the book (loaded on demand)
+software-design-philosophy/
+├── SKILL.md                # core concepts + red-flags quick-reference table
+└── references/
+    └── examples.md         # worked examples from the book (loaded on demand)
 ```
+
+The skill lives in a subdirectory (not at the repo root) so the [skills CLI](https://skills.sh)
+installs `references/` alongside `SKILL.md`. See [vercel-labs/skills#1517](https://github.com/vercel-labs/skills/issues/1517).
 
 `SKILL.md` covers complexity symptoms and root causes, strategic vs. tactical
 programming, deep vs. shallow modules, information hiding, general- vs.
@@ -91,13 +96,12 @@ npx skills remove software-design-philosophy
 
 ## Manual install
 
-If you prefer not to use the CLI, clone or copy this repository into your agent's
-skills folder. The directory name should match the skill `name` in `SKILL.md`
-(`software-design-philosophy`):
+If you prefer not to use the CLI, copy the `software-design-philosophy/` folder (not the
+whole repo) into your agent's skills directory:
 
 ```bash
-git clone https://github.com/B87/software-design-skill.git \
-  ~/.cursor/skills/software-design-philosophy   # Cursor (global example)
+git clone https://github.com/B87/software-design-skill.git /tmp/software-design-skill
+cp -r /tmp/software-design-skill/software-design-philosophy ~/.cursor/skills/
 ```
 
 For agents without a skills folder, paste `SKILL.md` into project instructions or a
