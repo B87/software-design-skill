@@ -58,6 +58,30 @@ needed; do not require a decision log or architecture document for every small c
 Reassess when evidence or constraints change. Resolve the choice when the reason to wait
 ends; the principle does not require using every remaining day.
 
+## Choosing a learning technique
+
+*The Pragmatic Programmer* distinguishes prototypes from tracer bullets. Use the
+uncertainty to choose the technique; neither is required for every design decision.
+
+| Technique | Useful when | What happens to the code |
+| --- | --- | --- |
+| Prototype | A focused question can be answered in isolation, such as whether a query meets a workload target. | Treat it as disposable; record the finding and the assumptions that limit it. |
+| Tracer bullet | The uncertainty lies in how the real parts fit together. | Build a narrow end-to-end path intended to evolve, with the quality needed for its actual use. |
+
+For example, before choosing a reporting architecture, use representative data in a
+disposable query benchmark if query performance is the unknown. If the unknown is how
+authorization, request handling, storage, and rendering interact, implement one real
+report through that path and use the integration feedback to guide the next increment.
+These are original examples, not scenarios from the book.
+
+State what evidence would change the choice and when to stop exploring. A prototype's
+success does not establish production readiness, and a tracer bullet need not implement
+every feature. Keep required behavior correct for the path actually delivered.
+
+The book's reversibility guidance reinforces the existing recommendation to keep changes
+local and reconsider choices as evidence arrives; assess actual reversal cost rather than
+assuming every decision can be undone cheaply.
+
 ## Worked scenarios
 
 ### Defer service extraction while learning
@@ -117,6 +141,8 @@ reversal cost now; this example's assumption no longer holds.
 
 ## Sources
 
+- [Dave Thomas and Andy Hunt, The Pragmatic Programmer: official tips](https://pragprog.com/tips/),
+  especially tips 18 (reversibility), 20 (tracer bullets), and 21 (prototypes).
 - [Jeff Atwood, The Last Responsible Moment (2006)](https://blog.codinghorror.com/the-last-responsible-moment/).
   Accessible introduction quoting *Lean Software Development: An Agile Toolkit* by Mary
   and Tom Poppendieck, and connecting the concept to avoiding premature generalization.

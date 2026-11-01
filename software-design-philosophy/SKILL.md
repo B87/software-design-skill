@@ -1,12 +1,14 @@
 ---
 name: software-design-philosophy
-description: Software design vocabulary and judgment grounded in John Ousterhout's "A Philosophy of Software Design," complemented by Lean decision timing, Real Options, and YAGNI. Use during code reviews, architecture/API design, module decomposition, refactoring, and error-handling design. Trigger when the user asks about complexity, coupling, interfaces, boundaries, naming, premature abstraction, or when to commit to an architectural choice. Also applies to APIs mirroring internal structures, getLine/putLine and split/join at call sites, UI-named storage methods, deep vs shallow modules, and information leakage.
+description: Evaluate software designs to reduce complexity and make code easier to change. Use during code reviews, architecture and API design, module decomposition, refactoring, and error-handling design. Helps assess coupling, information hiding, interface depth, naming, duplicated knowledge, premature abstraction, and when to commit to a design choice. Apply when the user asks whether a design makes sense, how to split responsibilities, or how to simplify code without adding speculative flexibility.
 ---
 
 # Software Design Philosophy
 
 Grounded in John Ousterhout's *A Philosophy of Software Design*, with complementary
 guidance on commitment timing from Lean software development, Real Options, and YAGNI.
+Dave Thomas and Andy Hunt's *The Pragmatic Programmer* adds guidance on changeability,
+duplicated knowledge, independence between concerns, and learning through implementation.
 Ousterhout's central thesis: **the
 core challenge of software design is managing complexity**, and complexity is created by
 the accumulation of many small decisions, not a single catastrophic one. That's why the
@@ -25,7 +27,7 @@ doesn't replace mechanical diff-checking.
    three complexity symptoms (below) it produces. Naming the symptom is usually more
    useful to the user than jumping straight to a fix.
 2. **Reach for the Red Flags table** (Section 14) as a fast checklist during code review —
-   it summarizes the Ousterhout design smells below.
+   it summarizes design smells below, including a knowledge-based interpretation of DRY.
 3. **Explain the "why," not just the rule.** Ousterhout's ideas land better as reasoning
    ("this interface forces every caller to know about an implementation detail") than as
    a citation ("rule #4 says..."). Adapt the framing to the code in front of you rather
@@ -34,6 +36,9 @@ doesn't replace mechanical diff-checking.
    downward are usually right, but a smaller/uglier special-case solution is sometimes the
    pragmatic choice under real deadlines. Say so when it applies — the goal is better
    judgment, not rule-following.
+   Apply *The Pragmatic Programmer*'s Easier to Change (ETC) lens: compare designs against
+   a concrete, plausible change and trace what each would require. Include today's
+   interface and maintenance costs; hypothetical flexibility alone is insufficient.
 5. **Reach for a worked example when it'll land better than another abstract description.**
    `references/examples.md` has concrete illustrations from the book — pull one in if the
    user is going deeper, seems unconvinced, or asks for an example. Don't dump them by
@@ -59,6 +64,12 @@ doesn't replace mechanical diff-checking.
    clear boundaries; justify additional abstraction by its current benefit. For uncertain
    architectural choices, speculative flexibility, or expensive migrations, read
    [Decision timing](references/decision-timing.md), including its examples and sources.
+
+For questions about DRY, independent concerns, or competing abstractions, read
+[Changeability](references/changeability.md). It explains how to distinguish duplicated
+knowledge from coincidental similarity and apply orthogonality without creating shallow
+wrappers. For prototypes and tracer bullets, use the learning techniques in
+[Decision timing](references/decision-timing.md#choosing-a-learning-technique).
 
 ---
 
@@ -144,6 +155,11 @@ up sharing knowledge they shouldn't.
 To fix leakage: merge the modules that share the knowledge, or — if that's not practical —
 concentrate the shared information behind one new, deep module that both can depend on
 instead of directly on each other.
+
+Check **orthogonality** as well: can unrelated concerns change independently? A display
+change should not require changing persistence policy. Assess actual dependencies and
+shared state, not class count; splitting a cohesive module into shallow wrappers can make
+change harder. See [Changeability](references/changeability.md#orthogonality).
 
 *(When a storage class takes UI types like `Cursor` or `Selection`, see the text-editor
 `Text` class example in `references/examples.md`.)*
@@ -316,7 +332,7 @@ say out loud:
 | Overexposure | The common API path forces callers to know about rarely-used features |
 | Pass-Through Method | A method just forwards its args to another method with a similar signature |
 | Pass-Through Variable | A parameter threaded through layers that never use it |
-| Repetition | Non-trivial logic duplicated across locations |
+| Duplicated Knowledge (DRY) | The same rule or decision has representations that must change together; similar-looking code alone is insufficient evidence |
 | Special-General Mixture | General-purpose and special-purpose code aren't cleanly separated |
 | Conjoined Methods | You can't understand one method without also understanding another |
 | Comment Repeats Code | The comment is just an English translation of the code beneath it |
@@ -340,6 +356,8 @@ say out loud:
 - Push complexity down into the module, not out onto every caller.
 - Define errors (and other special cases) out of existence where the semantics allow it.
 - Design it twice before committing to the first idea.
+- Compare designs against plausible changes; keep unrelated concerns independent and
+  consolidate duplicated knowledge without coupling independent policies.
 - For consequential choices, assess when to commit as well as what to choose: prefer
   reversible progress, and tie deliberate deferral to evidence and a commitment trigger.
 - Comments exist to say what the code can't — never to restate it.
