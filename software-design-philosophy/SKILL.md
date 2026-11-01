@@ -15,19 +15,16 @@ the accumulation of many small decisions, not a single catastrophic one. That's 
 right mindset is zero-tolerance — treat "minor" complexity in a name, an interface, or an
 error path as worth fixing, because it never stays minor once it compounds.
 
-Use this skill to bring vocabulary and a diagnostic lens to design conversations — naming
-symptoms precisely (shallow module, information leakage, pass-through method) is often
-more useful than a vague "this feels off." If a repo already has its own code-review or
-simplification tooling, this skill supplies the conceptual framing underneath it; it
-doesn't replace mechanical diff-checking.
+Name design symptoms precisely and explain their consequences. This skill supplies
+conceptual framing alongside repository review tooling; it does not replace mechanical
+checks.
 
 ## How to apply this
 
-1. **Diagnose before prescribing.** Read the code/design in question and ask which of the
-   three complexity symptoms (below) it produces. Naming the symptom is usually more
-   useful to the user than jumping straight to a fix.
-2. **Reach for the Red Flags table** (Section 14) as a fast checklist during code review —
-   it summarizes design smells below, including a knowledge-based interpretation of DRY.
+1. **Diagnose before prescribing.** Read the code/design and identify which of the three
+   complexity symptoms (below) it produces before proposing a fix.
+2. **Use the Red Flags table** (Section 14) during review, including its knowledge-based
+   interpretation of DRY.
 3. **Explain the "why," not just the rule.** Ousterhout's ideas land better as reasoning
    ("this interface forces every caller to know about an implementation detail") than as
    a citation ("rule #4 says..."). Adapt the framing to the code in front of you rather
@@ -39,12 +36,9 @@ doesn't replace mechanical diff-checking.
    Apply *The Pragmatic Programmer*'s Easier to Change (ETC) lens: compare designs against
    a concrete, plausible change and trace what each would require. Include today's
    interface and maintenance costs; hypothetical flexibility alone is insufficient.
-5. **Reach for a worked example when it'll land better than another abstract description.**
-   `references/examples.md` has concrete illustrations from the book — pull one in if the
-   user is going deeper, seems unconvinced, or asks for an example. Don't dump them by
-   default.
-6. **Match the example to the symptom** — read only the relevant section of
-   `references/examples.md`:
+5. **Match examples to symptoms.** When an example would clarify the reasoning, the user
+   asks to go deeper, or seems unconvinced, read the relevant section of
+   `references/examples.md`. Do not load or recite all examples by default:
 
    | If the conversation is about… | Pull… |
    | --- | --- |
@@ -54,7 +48,7 @@ doesn't replace mechanical diff-checking.
    | Errors/cases forced on every caller | Unix unlink vs Windows delete; Java checked exceptions |
    | Hard internal choice exposed as config or caller duty | hash map resizing |
 
-7. **Check commitment timing for consequential choices.** Consider uncertainty, reversal
+6. **Check commitment timing for consequential choices.** Consider uncertainty, reversal
    cost, and what further work could teach you. Make inexpensive, reversible choices to
    keep progress moving. Defer costly commitments when useful evidence is forthcoming
    and alternatives remain viable. When recommending deferral, identify what remains
@@ -96,9 +90,6 @@ stay simple if it's decomposed well.
 - **Obscurity** — important information isn't obvious: vague names, missing context,
   implicit conventions, unstated constraints.
 
-Because complexity accumulates from many small decisions rather than one big one, treat
-every instance — even ones that seem trivial in isolation — as worth calling out.
-
 ## 2. Strategic vs. tactical programming
 
 **Tactical programming** optimizes for "get this feature working now" and defers design
@@ -136,9 +127,6 @@ implementation has to do more work internally, or rare cases require a more elab
 call. A simple interface is worth more than a simple implementation — and the common path
 should never have to pay for the existence of rare ones.
 
-*(For why "it works" isn't the same question as "it's well designed," the text-editor
-class study in `references/examples.md` is the sharpest illustration.)*
-
 ## 4. Information hiding and information leakage
 
 Each module should encapsulate a design decision — a data structure, an algorithm, a
@@ -160,9 +148,6 @@ Check **orthogonality** as well: can unrelated concerns change independently? A 
 change should not require changing persistence policy. Assess actual dependencies and
 shared state, not class count; splitting a cohesive module into shallow wrappers can make
 change harder. See [Changeability](references/changeability.md#orthogonality).
-
-*(When a storage class takes UI types like `Cursor` or `Selection`, see the text-editor
-`Text` class example in `references/examples.md`.)*
 
 ## 5. General-purpose vs. special-purpose modules
 
@@ -193,8 +178,6 @@ A system's layers should each contribute a genuinely different abstraction. If t
 adjacent layers look similar, something is probably wrong with how responsibility is
 split between them.
 
-Two concrete tells:
-
 - **Pass-through method** (red flag) — a method that does almost nothing but forward its
   arguments to another method with a near-identical signature. It signals the layers
   aren't actually offering different abstractions.
@@ -220,18 +203,11 @@ Two common anti-patterns that do the opposite:
 Both look like they save implementation effort, but they multiply complexity across every
 place that has to deal with the consequence.
 
-*(The line-oriented vs character-oriented `Text` API in `references/examples.md` is the
-canonical "pull complexity downward" illustration for API design. Java's checked
-exceptions and hash-map resizing there are good contrasting examples too — one pushes
-complexity up, the other pulls it down.)*
-
 ## 8. Define errors out of existence
 
 Exception and error handling is one of the largest sources of complexity in most systems,
 so reducing how many error paths exist — not just handling them more gracefully — is one
 of the highest-leverage design moves available.
-
-Ways to do this:
 
 - **Redefine the semantics** so the error condition simply can't occur. E.g., a
   `delete(key)`-type operation that succeeds whether or not the key existed, because its
@@ -246,9 +222,6 @@ Ways to do this:
 This isn't about swallowing errors that matter — a dropped network packet still needs
 real handling. It's about noticing which "errors" are only errors because of an
 arbitrary interface decision, and removing that decision.
-
-*(Unix `unlink` vs. Windows file deletion, in `references/examples.md`, is a good real-world
-contrast of two systems making opposite calls on the same operation.)*
 
 ## 9. Design it twice
 
@@ -276,8 +249,6 @@ anything true about the code that isn't visible just by reading it.
 **Comment repeats code** (red flag): a comment that's just an English transliteration of
 the line beneath it adds no information and is dead weight the moment the code changes.
 
-Three layers worth distinguishing:
-
 - **Interface comments** — what a piece of code does and why, with no implementation
   detail leaking in.
 - **Implementation comments** — how and why it's built this particular way internally.
@@ -286,10 +257,8 @@ Three layers worth distinguishing:
 
 ## 11. The art of naming
 
-A good name is precise (unambiguous), consistent (always means the same thing across the
-codebase), and informative enough to act as documentation on its own.
-
-Two red flags:
+A good name is unambiguous, means the same thing across the codebase, and is informative
+enough to serve as documentation.
 
 - **Vague name** — generic placeholders like `data`, `result`, `tmp`, `info` that carry no
   real information about what the thing is.
@@ -321,8 +290,7 @@ looks syntactically.
 
 ## 14. Red flags quick reference
 
-Use this as a fast checklist during review — each row names a smell precisely enough to
-say out loud:
+Use this checklist to name design smells during review:
 
 | Signal | Meaning |
 | --- | --- |
