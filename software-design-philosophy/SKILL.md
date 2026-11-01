@@ -1,6 +1,6 @@
 ---
 name: software-design-philosophy
-description: Software design vocabulary and judgment grounded in John Ousterhout's "A Philosophy of Software Design," complemented by The Pragmatic Programmer, Lean decision timing, Real Options, and YAGNI. Use during code reviews, architecture/API design, module decomposition, refactoring, and error-handling design. Trigger when the user asks about complexity, coupling, interfaces, boundaries, naming, duplicated knowledge versus similar code, premature abstraction, or when to commit to an architectural choice. Also applies to APIs mirroring internal structures, getLine/putLine and split/join at call sites, UI-named storage methods, deep vs shallow modules, and information leakage.
+description: Evaluate software designs to reduce complexity and make code easier to change. Use during code reviews, architecture and API design, module decomposition, refactoring, and error-handling design. Helps assess coupling, information hiding, interface depth, naming, duplicated knowledge, premature abstraction, and when to commit to a design choice. Apply when the user asks whether a design makes sense, how to split responsibilities, or how to simplify code without adding speculative flexibility.
 ---
 
 # Software Design Philosophy
