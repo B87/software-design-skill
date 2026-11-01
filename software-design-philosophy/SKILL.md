@@ -21,11 +21,10 @@ checks.
 
 ## How to apply this
 
-1. **Diagnose before prescribing.** Read the code/design in question and ask which of the
-   three complexity symptoms (below) it produces. Naming the symptom is usually more
-   useful to the user than jumping straight to a fix.
-2. **Reach for the Red Flags table** (Section 14) as a fast checklist during code review —
-   it summarizes design smells below, including a knowledge-based interpretation of DRY.
+1. **Diagnose before prescribing.** Read the code/design and identify which of the three
+   complexity symptoms (below) it produces before proposing a fix.
+2. **Use the Red Flags table** (Section 14) during review, including its knowledge-based
+   interpretation of DRY.
 3. **Explain the "why," not just the rule.** Ousterhout's ideas land better as reasoning
    ("this interface forces every caller to know about an implementation detail") than as
    a citation ("rule #4 says..."). Adapt the framing to the code in front of you rather
@@ -90,9 +89,6 @@ stay simple if it's decomposed well.
   entangled with other code.
 - **Obscurity** — important information isn't obvious: vague names, missing context,
   implicit conventions, unstated constraints.
-
-Because complexity accumulates from many small decisions rather than one big one, treat
-every instance — even ones that seem trivial in isolation — as worth calling out.
 
 ## 2. Strategic vs. tactical programming
 
@@ -182,8 +178,6 @@ A system's layers should each contribute a genuinely different abstraction. If t
 adjacent layers look similar, something is probably wrong with how responsibility is
 split between them.
 
-Two concrete tells:
-
 - **Pass-through method** (red flag) — a method that does almost nothing but forward its
   arguments to another method with a near-identical signature. It signals the layers
   aren't actually offering different abstractions.
@@ -214,8 +208,6 @@ place that has to deal with the consequence.
 Exception and error handling is one of the largest sources of complexity in most systems,
 so reducing how many error paths exist — not just handling them more gracefully — is one
 of the highest-leverage design moves available.
-
-Ways to do this:
 
 - **Redefine the semantics** so the error condition simply can't occur. E.g., a
   `delete(key)`-type operation that succeeds whether or not the key existed, because its
@@ -257,8 +249,6 @@ anything true about the code that isn't visible just by reading it.
 **Comment repeats code** (red flag): a comment that's just an English transliteration of
 the line beneath it adds no information and is dead weight the moment the code changes.
 
-Three layers worth distinguishing:
-
 - **Interface comments** — what a piece of code does and why, with no implementation
   detail leaking in.
 - **Implementation comments** — how and why it's built this particular way internally.
@@ -267,10 +257,8 @@ Three layers worth distinguishing:
 
 ## 11. The art of naming
 
-A good name is precise (unambiguous), consistent (always means the same thing across the
-codebase), and informative enough to act as documentation on its own.
-
-Two red flags:
+A good name is unambiguous, means the same thing across the codebase, and is informative
+enough to serve as documentation.
 
 - **Vague name** — generic placeholders like `data`, `result`, `tmp`, `info` that carry no
   real information about what the thing is.
@@ -302,8 +290,7 @@ looks syntactically.
 
 ## 14. Red flags quick reference
 
-Use this as a fast checklist during review — each row names a smell precisely enough to
-say out loud:
+Use this checklist to name design smells during review:
 
 | Signal | Meaning |
 | --- | --- |
@@ -322,3 +309,26 @@ say out loud:
 | Hard to Pick a Name | Can't find a precise name — often means the design itself is unclear |
 | Hard to Describe | A module needs a long comment to be fully explained — likely too complex |
 | Non-Obvious Code | A reader can't easily tell what the code does or why |
+
+## 15. Design principles summary
+
+- Complexity is incremental — sweat the small stuff.
+- Working code by itself isn't the goal; design quality is too.
+- Make continual small investments in design (~10–20% of time), not a big refactor later.
+- Modules should be deep: simple interface, real functionality hidden behind it.
+- The common usage path should be the simplest one, even at the cost of a more complex
+  implementation.
+- General-purpose modules are usually deeper than special-purpose ones — but keep the two
+  kinds of code cleanly separated.
+- Adjacent layers should offer genuinely different abstractions, not near-duplicates.
+- Push complexity down into the module, not out onto every caller.
+- Define errors (and other special cases) out of existence where the semantics allow it.
+- Design it twice before committing to the first idea.
+- Compare designs against plausible changes; keep unrelated concerns independent and
+  consolidate duplicated knowledge without coupling independent policies.
+- For consequential choices, assess when to commit as well as what to choose: prefer
+  reversible progress, and tie deliberate deferral to evidence and a commitment trigger.
+- Comments exist to say what the code can't — never to restate it.
+- Names should be precise, consistent, and informative; software should be designed for
+  ease of reading, not ease of writing.
+- The real unit of progress is a good abstraction, not a shipped feature.
