@@ -5,7 +5,8 @@
 An [Agent Skill](https://agentskills.io) that gives AI coding agents a vocabulary and
 diagnostic lens for software design quality — grounded in John Ousterhout's
 *A Philosophy of Software Design*, complemented by Lean decision timing, Real Options,
-and YAGNI. Use it to sharpen code reviews, architecture
+and YAGNI, plus changeability concepts from *The Pragmatic Programmer*.
+Use it to sharpen code reviews, architecture
 discussions, module/interface decisions, and error-handling design by naming problems
 precisely (shallow module, information leakage, pass-through method, temporal
 decomposition…) instead of leaving feedback at "this feels off."
@@ -18,6 +19,7 @@ software-design-philosophy/
 ├── SKILL.md                # core concepts + red-flags quick-reference table
 └── references/
     ├── examples.md         # worked examples from the book (loaded on demand)
+    ├── changeability.md    # ETC, knowledge-based DRY, and orthogonality
     └── decision-timing.md  # last responsible moment, Real Options, YAGNI, and sources
 ```
 
@@ -34,6 +36,11 @@ reversible choice, or defer while gathering evidence. `references/decision-timin
 explains how to identify a commitment trigger, account for delivery lead time, and avoid
 speculative flexibility. Its worked scenarios cover all three actions and explain how
 decision timing fits with strategic design and general-purpose interfaces.
+
+*The Pragmatic Programmer* adds Easier to Change (ETC), DRY as duplicated knowledge,
+orthogonality, and learning through prototypes and tracer bullets. The changeability
+reference includes examples of shared rules and coincidentally similar code, while the
+decision-timing reference explains how to choose a learning technique.
 
 ## Install (recommended)
 
@@ -118,12 +125,14 @@ examples pulled in.
 
 ## Credit
 
-The core design vocabulary and book examples come from John Ousterhout's
+The original design vocabulary and book examples come from John Ousterhout's
 *A Philosophy of Software Design*. Decision-timing guidance draws on Mary and Tom
 Poppendieck's Lean software development work, Chris Matts and Olav Maassen's Real Options
 writing, and Martin Fowler's explanation of YAGNI from Extreme Programming. Jeff Atwood's
 [The Last Responsible Moment](https://blog.codinghorror.com/the-last-responsible-moment/)
-provides an accessible introduction. See
+provides an accessible introduction. Changeability and learning techniques draw on Dave
+Thomas and Andy Hunt's *The Pragmatic Programmer*, 20th Anniversary Edition; see
+[Changeability](software-design-philosophy/references/changeability.md#sources). See
 [Decision timing](software-design-philosophy/references/decision-timing.md#sources) for
 sources and the distinction between the authors' concepts and this skill's synthesis.
 
