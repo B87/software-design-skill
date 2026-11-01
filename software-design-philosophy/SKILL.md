@@ -1,11 +1,13 @@
 ---
 name: software-design-philosophy
-description: Software design philosophy and vocabulary based on John Ousterhout's "A Philosophy of Software Design," centered on managing complexity. Use during code reviews, architecture/API design, module decomposition, refactoring, and error-handling design. Trigger when the user asks whether design is too complex, how to split modules, reduce coupling, improve interfaces, handle errors, name things well, or whether a design makes sense — even without using book terms. Also trigger on getLine/putLine APIs, split/join at call sites, UI-named storage methods (backspace, deleteSelection), APIs mirroring internal structures, deep vs shallow modules, information leakage, or feedback on structure, boundaries, and naming beyond bug fixes.
+description: Software design vocabulary and judgment grounded in John Ousterhout's "A Philosophy of Software Design," complemented by Lean decision timing, Real Options, and YAGNI. Use during code reviews, architecture/API design, module decomposition, refactoring, and error-handling design. Trigger when the user asks about complexity, coupling, interfaces, boundaries, naming, premature abstraction, or when to commit to an architectural choice. Also applies to APIs mirroring internal structures, getLine/putLine and split/join at call sites, UI-named storage methods, deep vs shallow modules, and information leakage.
 ---
 
 # Software Design Philosophy
 
-Distilled from John Ousterhout's *A Philosophy of Software Design*. Central thesis: **the
+Grounded in John Ousterhout's *A Philosophy of Software Design*, with complementary
+guidance on commitment timing from Lean software development, Real Options, and YAGNI.
+Ousterhout's central thesis: **the
 core challenge of software design is managing complexity**, and complexity is created by
 the accumulation of many small decisions, not a single catastrophic one. That's why the
 right mindset is zero-tolerance — treat "minor" complexity in a name, an interface, or an
@@ -23,7 +25,7 @@ doesn't replace mechanical diff-checking.
    three complexity symptoms (below) it produces. Naming the symptom is usually more
    useful to the user than jumping straight to a fix.
 2. **Reach for the Red Flags table** (Section 14) as a fast checklist during code review —
-   it's the compressed version of everything below.
+   it summarizes the Ousterhout design smells below.
 3. **Explain the "why," not just the rule.** Ousterhout's ideas land better as reasoning
    ("this interface forces every caller to know about an implementation detail") than as
    a citation ("rule #4 says..."). Adapt the framing to the code in front of you rather
@@ -46,6 +48,17 @@ doesn't replace mechanical diff-checking.
    | Interface too wide for what it does | Unix I/O vs Java streams |
    | Errors/cases forced on every caller | Unix unlink vs Windows delete; Java checked exceptions |
    | Hard internal choice exposed as config or caller duty | hash map resizing |
+
+7. **Check commitment timing for consequential choices.** Consider uncertainty, reversal
+   cost, and what further work could teach you. Make inexpensive, reversible choices to
+   keep progress moving. Defer costly commitments when useful evidence is forthcoming
+   and alternatives remain viable. When recommending deferral, identify what remains
+   open, how to learn, and the event or deadline that requires commitment, allowing time
+   for implementation and validation. Decide sooner when waiting blocks valuable work,
+   increases risk, or offers little additional information. Preserve options through
+   clear boundaries; justify additional abstraction by its current benefit. For uncertain
+   architectural choices, speculative flexibility, or expensive migrations, read
+   [Decision timing](references/decision-timing.md), including its examples and sources.
 
 ---
 
@@ -90,6 +103,10 @@ it's a clean abstraction.
 When reviewing code or a plan, it's fair to flag when something looks like the tactical
 shortcut (a special case bolted on, a TODO instead of a decision) versus a strategic
 investment.
+
+Deliberately deferring a costly commitment can also be strategic when it includes a
+learning action and a concrete trigger for deciding. An unexplained TODO does neither;
+see [Decision timing](references/decision-timing.md).
 
 ## 3. Deep modules — the most important idea here
 
@@ -140,6 +157,11 @@ When designing something new, ask: *what's the most general-purpose interface th
 satisfies what I need right now?* That's a question about the **interface**, not the
 implementation — the implementation should still only do what's actually needed today;
 don't over-build behind a general API just because the API is general.
+
+A general interface that simplifies today's callers is useful now. Extra extension
+points, configuration, or frameworks for hypothetical requirements need separate
+justification; generality alone is not a reason to add them (see YAGNI in
+[Decision timing](references/decision-timing.md)).
 
 Keep general-purpose and special-purpose code cleanly separated rather than mixed in the
 same module — mixing them is its own red flag (see Section 14).
@@ -219,6 +241,10 @@ approaches before picking one — even when the first idea already looks good. C
 on interface simplicity, generality, performance, and how hard each is to implement. The
 point isn't ceremony; it's that the second option, even a bad one, usually reveals
 something about the first that wasn't visible when it had no competition.
+
+Comparing alternatives need not force an immediate commitment. If a consequential
+uncertainty remains, use a focused experiment or a reversible implementation to learn
+before choosing; account for the cost of carrying multiple options.
 
 ## 10. The philosophy of comments
 
@@ -314,6 +340,8 @@ say out loud:
 - Push complexity down into the module, not out onto every caller.
 - Define errors (and other special cases) out of existence where the semantics allow it.
 - Design it twice before committing to the first idea.
+- For consequential choices, assess when to commit as well as what to choose: prefer
+  reversible progress, and tie deliberate deferral to evidence and a commitment trigger.
 - Comments exist to say what the code can't — never to restate it.
 - Names should be precise, consistent, and informative; software should be designed for
   ease of reading, not ease of writing.
